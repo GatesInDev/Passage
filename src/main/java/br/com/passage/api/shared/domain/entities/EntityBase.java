@@ -1,4 +1,4 @@
-package br.com.passage.api.shared;
+package br.com.passage.api.shared.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

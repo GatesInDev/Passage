@@ -1,6 +1,6 @@
 package br.com.passage.api.fleet.internal.domain.entities;
 
-import br.com.passage.api.shared.EntityBase;
+import br.com.passage.api.shared.domain.entities.EntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
