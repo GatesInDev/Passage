@@ -104,9 +104,9 @@ public class Company extends EntityBase {
      * Inscrição estadual da empresa.
      *
      * <p>Identificação fiscal estadual vinculada à empresa.
-     * É um campo obrigatório e possui limite de 128 caracteres.</p>
+     * É um campo obrigatório e possui limite de 15 caracteres.</p>
      */
-    @Column(name = "state_registration", nullable = false, length = 128)
+    @Column(name = "state_registration", nullable = false, length = 15)
     private String stateRegistration;
 
     /**
@@ -115,10 +115,6 @@ public class Company extends EntityBase {
      * <p>Identifica o órgão ou entidade responsável pela regulamentação
      * estadual aplicável à empresa.</p>
      */
-    @Column(
-            name = "state_regulatory_agency",
-            nullable = false,
-            length = 255
-    )
+    @Column(name = "state_regulatory_agency", nullable = false, length = 255)
     private String stateRegulatoryAgency;
 }
