@@ -1,7 +1,7 @@
 package br.com.passage.api.fleet.internal.service.company;
 
-import br.com.passage.api.fleet.dto.company.CreateCompanyRequest;
-import br.com.passage.api.fleet.dto.company.CompanyResponse;
+import br.com.passage.api.fleet.internal.dto.company.CreateCompanyRequest;
+import br.com.passage.api.fleet.internal.dto.company.CompanyResponse;
 import br.com.passage.api.fleet.internal.domain.entities.Company;
 import br.com.passage.api.fleet.internal.repository.CompanyRepository;
 import br.com.passage.api.shared.domain.exceptions.BusinessException;
