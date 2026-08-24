@@ -1,17 +1,13 @@
 package br.com.passage.api.fleet.internal.domain.entities;
 
 import br.com.passage.api.shared.domain.entities.EntityBase;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.br.CNPJ;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representa uma empresa cadastrada na plataforma.
@@ -65,6 +61,7 @@ import org.hibernate.validator.constraints.br.CNPJ;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Builder
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Company extends EntityBase {
@@ -117,4 +114,35 @@ public class Company extends EntityBase {
      */
     @Column(name = "state_regulatory_agency", nullable = false, length = 255)
     private String stateRegulatoryAgency;
+
+    /**
+     * Lista de motoristas vinculados à empresa transportadora.
+     * <p>
+     * Configurada com deleção em cascata e remoção de órfãos para manter
+     * a integridade do agregado da empresa.
+     * </p>
+     */
+    @Builder.Default
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Driver> drivers = new ArrayList<>();
+
+    /**
+     * Adiciona um motorista à empresa e sincroniza a relação bidirecional JPA.
+     *
+     * @param driver Instância do {@link Driver} a ser vinculado a esta empresa.
+     */
+    public void addDriver(Driver driver) {
+        drivers.add(driver);
+        driver.setCompany(this);
+    }
+
+    /**
+     * Remove o motorista da empresa e desfaz o vínculo da relação bidirecional JPA.
+     *
+     * @param driver Instância do {@link Driver} a ser desvinculado desta empresa.
+     */
+    public void removeDriver(Driver driver) {
+        drivers.remove(driver);
+        driver.setCompany(null);
+    }
 }
