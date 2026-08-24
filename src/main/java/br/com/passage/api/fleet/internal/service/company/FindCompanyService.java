@@ -1,37 +1,28 @@
 package br.com.passage.api.fleet.internal.service.company;
 
-import br.com.passage.api.fleet.internal.dto.company.CreateCompanyRequest;
-import br.com.passage.api.fleet.internal.dto.company.CompanyResponse;
 import br.com.passage.api.fleet.internal.domain.entities.Company;
+import br.com.passage.api.fleet.internal.dto.company.CompanyResponse;
 import br.com.passage.api.fleet.internal.repository.CompanyRepository;
 import br.com.passage.api.shared.domain.exceptions.BusinessException;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class CreateCompanyService
+public class FindCompanyService
 {
     private final CompanyRepository companyRepository;
 
     @Transactional
-    public CompanyResponse execute(CreateCompanyRequest request)
+    public CompanyResponse execute(UUID id)
     {
-        if (companyRepository.existsByDocumentId(request.documentId()))
-        {
-            throw new BusinessException("Já existe uma empresa cadastrada com o CNPJ " + request.documentId());
-        }
-
-        Company company = Company.builder()
-                .corporateName(request.corporateName())
-                .tradeName(request.tradeName())
-                .documentId(request.documentId())
-                .stateRegistration(request.stateRegistration())
-                .stateRegulatoryAgency(request.stateRegulatoryAgency())
-                .build();
-
-        Company savedCompany = companyRepository.save(company);
+        Company savedCompany = companyRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Não foi possível encontrar uma companhia com o identificador: " + id));
 
         return new CompanyResponse(
                 savedCompany.getId(),

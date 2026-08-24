@@ -3,7 +3,9 @@ package br.com.passage.api.fleet.internal.web;
 import br.com.passage.api.fleet.internal.dto.company.CompanyResponse;
 import br.com.passage.api.fleet.internal.dto.company.CreateCompanyRequest;
 import br.com.passage.api.fleet.internal.service.company.CreateCompanyService;
+import br.com.passage.api.fleet.internal.service.company.FindCompanyService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,10 +15,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Tag(name = "Empresas", description = "Endpoints para gestão de empresas transportadoras no módulo de Frota")
 @RestController
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
 
     private final CreateCompanyService createCompanyService;
+    private final FindCompanyService findCompanyService;
 
     @Operation(
             summary = "Cadastrar nova empresa",
@@ -51,5 +53,41 @@ public class CompanyController {
     public ResponseEntity<CompanyResponse> create(@Valid @RequestBody CreateCompanyRequest request) {
         CompanyResponse response = createCompanyService.execute(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(
+            summary = "Buscar empresa por UUID",
+            description = "Recupera os detalhes cadastrais de uma empresa transportadora a partir do seu identificador público (UUID)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Empresa encontrada com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CompanyResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Nenhuma empresa encontrada para o UUID informado",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Formato de UUID inválido na URL",
+                    content = @Content
+            )
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<CompanyResponse> findById(
+            @Parameter(
+                    description = "UUID público da empresa transportadora",
+                    example = "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+                    required = true
+            )
+            @PathVariable UUID id
+    ) {
+        return ResponseEntity.ok(findCompanyService.execute(id));
     }
 }
